@@ -2,17 +2,12 @@ import {
   IsEmail,
   IsEnum,
   IsInt,
-  IsNumber,
   IsOptional,
   IsPositive,
   IsString,
 } from 'class-validator';
 
-enum Role {
-  ADMIN,
-  BOSS,
-  USER,
-}
+import { Role } from '../../entities/user.entity';
 
 export class RegisterDto {
   @IsEmail()
