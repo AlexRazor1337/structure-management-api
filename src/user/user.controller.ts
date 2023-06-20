@@ -8,7 +8,7 @@ export class UserController {
   }
 
   @Patch(':id')
-    update(@Param('id') id: string): string {
-      return 'This action updates a user';
-    }
+  update(@Param('id') id: string): string {
+    return 'This action updates a user';
+  }
 }

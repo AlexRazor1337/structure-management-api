@@ -8,7 +8,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
   );
-  
+
   const configService = app.get(ConfigService);
   const port = configService.get<number>('APP_PORT');
   await app.listen(port);

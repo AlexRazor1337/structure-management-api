@@ -1,4 +1,9 @@
-import { IsNotEmpty, IsNumberString, IsString, validateSync } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumberString,
+  IsString,
+  validateSync,
+} from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 
 class EnviromentVariables {
