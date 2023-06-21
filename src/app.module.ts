@@ -20,6 +20,7 @@ import { validate } from './config/env.validation';
         host: configService.get<string>('DB_HOST'),
         port: configService.get<number>('DB_PORT'),
         username: configService.get<string>('DB_USERNAME'),
+        logging: true,
         password: configService.get<string>('DB_PASSWORD'),
         entities: [User],
       }),
