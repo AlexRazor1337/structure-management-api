@@ -29,14 +29,26 @@ export class AuthService {
       throw new HttpException('User already exists', 400);
     }
 
+    const boss = await this.userReposiory.findOne({
+      where: { id: registerDto.bossId },
+    });
+
+    if (!boss) {
+      throw new HttpException('Boss not found', 404);
+    }
+
     const hashedPassword = await this.hashPassword(registerDto.password);
 
     const user = await this.userReposiory.save({
       ...registerDto,
       password: hashedPassword,
+      boss: boss,
     });
 
-    return user;
+    return this.userReposiory.findOne({
+      where: { id: user.id },
+      select: ['id', 'email', 'role'],
+    });
   }
 
   private hashPassword(password: string) {

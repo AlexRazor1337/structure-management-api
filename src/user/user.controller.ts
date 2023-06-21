@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
@@ -21,7 +22,11 @@ export class UserController {
 
   @UseGuards(AccessTokenGuard)
   @Patch(':id')
-  update(@Param('id') id: number, @Request() { user }): Promise<User> {
-    return this.userService.updateUser(id, user);
+  update(
+    @Param('id') id: number,
+    @Request() { user },
+    @Body('bossId') bossId: number,
+  ): Promise<User> {
+    return this.userService.updateUser(id, user, bossId);
   }
 }

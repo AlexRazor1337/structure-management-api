@@ -46,7 +46,11 @@ export class UserService {
     return [user, ...flattenedSubordinates];
   }
 
-  async updateUser(id: number, requestUser: any): Promise<User> {
+  async updateUser(
+    id: number,
+    requestUser: any,
+    bossId: number,
+  ): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id } });
 
     if (!user) {
@@ -60,6 +64,24 @@ export class UserService {
     if (user.boss && user.boss.id !== requestUser.id) {
       throw new HttpException('Forbidden', 403);
     }
+
+    if (!bossId) {
+      throw new HttpException('New boss not found', 404);
+    }
+
+    const boss = await this.userRepository.findOne({ where: { id: bossId } });
+    if (!boss) {
+      throw new HttpException('New boss not found', 404);
+    }
+
+    user.boss = boss;
+
+    if (boss.role !== Role.ADMIN) {
+      boss.role = Role.BOSS;
+    }
+
+    await this.userRepository.save(user);
+    await this.userRepository.save(boss);
 
     return user;
   }
