@@ -1,73 +1,94 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This is a small server app built with Node.js and TypeScript using NestJS, TypeORM, and PostgreSQL. The app allows for simple management operations of an organization's user structure. It supports three user roles: Administrator, Boss, and Regular user.
 
-## Installation
+The app provides the following REST API endpoints:
 
+1. Register user: Allows users to register and create an account.
+2. Authenticate as a user: Provides user authentication functionality.
+3. Get list of users: Returns a list of users based on the user's role and hierarchy:
+   - Administrator can see all users.
+   - Boss can see herself and all subordinates recursively.
+   - Regular user can only see herself.
+4. Change user's boss: Enables a boss to change the boss of her subordinates.
+
+## How to run
+
+1. Install Dependencies: Run the following command in the terminal to install the required dependencies using PNPM(can be used interchangeably with NPM) package manager:
 ```bash
 $ pnpm install
 ```
 
-## Running the app
-
+2. Start Docker Containers for the DB: Execute the following command in the terminal to start the PostgreSQL Docker containers in the background:
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+docker-compose up -d
 ```
 
-## Test
-
+3. Create a `.env` file in the root directory of the project and fill it with the following environment variables:
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+DB_NAME=structure-managment
+DB_USERNAME=admin
+DB_PASSWORD=password
+DB_HOST=localhost
+DB_PORT=5432
+APP_PORT=3000
+JWT_SECRET=secret
+JWT_EXPIRATION_TIME=15m
+JWT_SECRET_REFRESH=secret2
+JWT_EXPIRATION_TIME_REFRESH=1d
+DB_LOGGING=false
 ```
 
-## Support
+4. Database Migration: Run the migration command to set up the database by executing the following command in the terminal:
+```bash
+pnpm run migrate:up
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+5. Start the Application: Start the application by running the following command in the terminal:
+```bash
+pnpm run start
+```
+The application should now be running and ready to accept requests.
 
-## Stay in touch
+## How to use?
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+The application is a REST API that can be used to manage a list of users.
+User routes require JWT Bearer token authentication. The token can be obtained by logging in using the `/auth/login` endpoint.
 
-## License
-
-Nest is [MIT licensed](LICENSE).
+The following endpoints are available:
+- Auth:
+  - POST /auth/login
+    ```
+    {
+      "email": "test@mail.com",
+      "password": "password"
+    }
+    ```
+  - POST /auth/register
+    ```
+    {
+      "email": "test@mail.com",
+      "password": "password",
+      "role": "USER",
+      "bossId": 1,
+    }
+    ```
+    
+    `role` can take the following values: `USER`, `ADMIN`, `BOSS`.
+  - POST /auth/refresh
+    ```
+    {
+      "refreshToken": "jwt_refresh_token"
+    }
+    ```
+  - User (requires authentication):
+    - GET /user  
+      Returns the list of users base on the current user's role.
+    - PATCH /user/:id
+      ```
+      {
+        "bossId": 1
+      }
+      ```
+      
+      Updates user boss with the given boss id.
