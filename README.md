@@ -81,14 +81,14 @@ The following endpoints are available:
       "refreshToken": "jwt_refresh_token"
     }
     ```
-  - User (requires authentication):
-    - GET /user  
-      Returns the list of users base on the current user's role.
-    - PATCH /user/:id
-      ```
-      {
-        "bossId": 1
-      }
-      ```
-      
-      Updates user boss with the given boss id.
+- User (requires authentication):
+  - GET /user  
+    Returns the list of users base on the current user's role.
+  - PATCH /user/:id
+    ```
+    {
+      "bossId": 1
+    }
+    ```
+    
+    Updates user boss with the given boss id.
