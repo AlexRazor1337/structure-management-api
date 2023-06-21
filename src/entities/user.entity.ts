@@ -1,9 +1,9 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum Role {
-  ADMIN,
-  BOSS,
-  USER,
+  ADMIN = 'ADMIN',
+  BOSS = 'BOSS',
+  USER = 'USER',
 }
 
 @Entity()
@@ -14,7 +14,7 @@ export class User {
   @Column({ unique: true, nullable: false })
   email: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, select: false })
   password: string;
 
   @Column({ nullable: false })
